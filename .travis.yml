@@ -4,7 +4,7 @@ services:
     - docker
 
 before_install:
-    - docker build kiily/react-test -f ./frontend/Dockerfile.dev ./frontend
+    - docker build -t kiily/react-test -f ./frontend/Dockerfile.dev ./frontend
 
 script:
     - docker run -e CI=true kiily/react-test npm test

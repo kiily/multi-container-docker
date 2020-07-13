@@ -1,0 +1,24 @@
+language: generic
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build kiily/react-test -f ./frontend/Dockerfile.dev ./frontend
+
+script:
+    - docker run -e CI=true kiily/react-test npm test
+
+after_success:
+    - docker build -t kiily/multi-container-docker-frontend ./frontend
+    - docker build -t kiily/multi-container-docker-nginx ./nginx
+    - docker build -t kiily/multi-container-docker-server ./server
+    - docker build -t kiily/multi-container-docker-worker ./worker
+    # Log in to Docker Hub
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # Push images to docker hub
+    - docker push kiily/multi-container-docker-frontend
+    - docker push kiily/multi-container-docker-nginx
+    - docker push kiily/multi-container-docker-server
+    - docker push kiily/multi-container-docker-worker
+
